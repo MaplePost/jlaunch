@@ -27,12 +27,12 @@ if(Boost_FOUND)
 endif()
 
 
-if(APPLE)
+if(DARWIN)
 
     list(APPEND MY_SRC alert_osx.mm osx_launch.mm )
     add_executable(${CUR_TARGET} MACOSX_BUNDLE ${MY_SRC})
     set_target_properties(${CUR_TARGET} PROPERTIES
-            BUNDLE True
+            BUNDLE TRUE
             MACOSX_BUNDLE_GUI_IDENTIFIER my.domain.style.identifier.${CUR_TARGET}
             MACOSX_BUNDLE_BUNDLE_NAME ${CUR_TARGET}
             MACOSX_BUNDLE_BUNDLE_VERSION "0.1"
@@ -44,7 +44,7 @@ if(APPLE)
     add_definitions(-DMAC_VERSION=1)
 
 
-    target_link_libraries(${CUR_TARGET} PRIVATE Boost::filesystem "-framework AppKit")
+    target_link_libraries(${CUR_TARGET} PUBLIC Boost::filesystem "-framework AppKit")
 
     # this ensures we wipe the app bundle on clean
     set_directory_properties(
@@ -65,7 +65,7 @@ if(APPLE)
             )
 
 
-endif(APPLE)
+endif(DARWIN)
 
 if(WINDOWS)
     add_executable(jlaunch
@@ -75,7 +75,7 @@ if(WINDOWS)
     add_definitions(-DMAC_VERSION=1)
 endif()
 
-    if (APPLE)
+    if (DARWIN)
     include(FindJNI)
     if (NOT JNI_FOUND)
         message (STATUS "Could not find JNI, retrying for JDK.")

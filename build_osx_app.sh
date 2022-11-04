@@ -50,6 +50,8 @@ BASE_APP=jlaunch.app
 BASE_BINARY_DIR=${1}
 JRE_ZIP_FILE=${2}
 
+rm -f "${BASE_BINARY_DIR}/${BASE_APP}.zip"
+
 echo "hello ${BASE_BINARY_DIR} ${JRE_ZIP_FILE}"
 mkdir -pv "${BASE_BINARY_DIR}/${BASE_APP}/Contents/Resources/Java"
 testfileexit "${BASE_BINARY_DIR}/${BASE_APP}/Contents/Resources/Java"
@@ -83,6 +85,7 @@ cp -fv "jlauncher/target/jlauncher-1.0-SNAPSHOT.jar" "${BASE_BINARY_DIR}/${BASE_
 
 #packager for osxmac
 
+cp Info.plist "${BASE_BINARY_DIR}/${BASE_APP}/Contents/Info.plist"
 
 testfileexit "${BASE_BINARY_DIR}/${BASE_APP}"
 ditto -c -k --sequesterRsrc --keepParent "${BASE_BINARY_DIR}/${BASE_APP}" "${BASE_BINARY_DIR}/${BASE_APP}.zip"

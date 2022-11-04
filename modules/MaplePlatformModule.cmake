@@ -38,7 +38,7 @@ endif(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
 
 
 if(NOT MSVC)
-  add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-std=c++11> $<$<COMPILE_LANGUAGE:C>:-std=c99>)
+  add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-std=c++11> $<$<COMPILE_LANGUAGE:C>:-std=c99> -fvisibility=hidden)
 
 include(CheckCXXCompilerFlag)
 
