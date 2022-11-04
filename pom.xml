@@ -19,10 +19,10 @@
             <resource>
                 <directory>${BASE_BINARY_DIR}</directory>
                 <excludes>
-                    <exclude>**/*</exclude>
+
                 </excludes>
                 <includes>
-                    <include>${BASE_APP}.zip</include>
+
                 </includes>
             </resource>
         </resources>

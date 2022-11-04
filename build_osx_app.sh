@@ -86,12 +86,12 @@ cp -fv "jlauncher/target/jlauncher-1.0-SNAPSHOT.jar" "${BASE_BINARY_DIR}/${BASE_
 #packager for osxmac
 
 cp Info.plist "${BASE_BINARY_DIR}/${BASE_APP}/Contents/Info.plist"
-
+mkdir -pv "${BASE_BINARY_DIR}/temp"
 testfileexit "${BASE_BINARY_DIR}/${BASE_APP}"
-ditto -c -k --sequesterRsrc --keepParent "${BASE_BINARY_DIR}/${BASE_APP}" "${BASE_BINARY_DIR}/${BASE_APP}.zip"
+ditto -c -k --sequesterRsrc --keepParent "${BASE_BINARY_DIR}/${BASE_APP}" "${BASE_BINARY_DIR}/temp/${BASE_APP}.zip"
 testexit $? " zipping ${BASE_APP}"
 
-mvn install -DBASE_APP="${BASE_APP}" -DBASE_BINARY_DIR="${BASE_BINARY_DIR}"
+mvn clean install -DBASE_APP="${BASE_APP}" -DBASE_BINARY_DIR="${BASE_BINARY_DIR}/temp"
 testexit $? "mvn install"
 
 #jar -cf "${BASE_APP}.jar" "${BASE_APP}"
