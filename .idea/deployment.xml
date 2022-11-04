@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" remoteFilesAllowedToDisappearOnAutoupload="false">
+    <serverData>
+      <paths name="Remote Host minimal 10.13 (1f3d6127-fa28-4421-844b-12cbc05287ee)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/var/folders/m0/6091pj6j44l7ck7c_8kw160w0000gn/T/tmp.kWUsdRdh" local="$PROJECT_DIR$" />
+          </mappings>
+          <excludedPaths>
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-remote-host-minimal-1013" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug" />
+          </excludedPaths>
+        </serverdata>
+      </paths>
+    </serverData>
+  </component>
+</project>

@@ -1,0 +1,7 @@
+{
+  "launch_jar":"appclass.jar",
+  "main_class":"ca/maplepost/jlauncher/JLauncherUi",
+  "extra_class_paths" : ["hello1","hello2"],
+  "jvm_arguments" : [],
+  "main_arguments" : ["test1","test2"]
+}
