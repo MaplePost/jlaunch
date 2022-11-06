@@ -18,6 +18,15 @@
 
 int osx_main(int argc, const char *argv[]);
 
+void _append_exception_trace_messages(
+        JNIEnv&	   ,
+        std::string& ,
+        jthrowable   ,
+        jmethodID	   ,
+        jmethodID	   ,
+        jmethodID	   ,
+        jmethodID	   );
+
 void ParkEventLoop();
 
 #elif defined (WIN_VERSION)
@@ -105,6 +114,133 @@ void error_and_exit(ERROR_CODES err, std::string info, std::string detail) {
 }
 
 
+
+
+/** Error reporting with jboject cleanup)
+   pass any jobjects that need to be cleaned out on error
+ @parameter env - the JNI Environment
+ @parameter numCleanups - the number of open objects to delete
+ @parameter ... - cvariable list of objects to delete local reference
+ returns true if errors were encountered
+ */
+static bool exceptionCheck(JNIEnv * env,int numCleanups,...)
+{
+    // Get the exception and clear as no
+    // JNI calls can be made while an exception exists.
+    jthrowable exception = env->ExceptionOccurred();
+    if (exception != NULL)
+    {
+
+        env->ExceptionClear();
+
+        jclass throwable_class = env->FindClass("java/lang/Throwable");
+        jmethodID mid_throwable_getCause =
+                env->GetMethodID(throwable_class,
+                                 "getCause",
+                                 "()Ljava/lang/Throwable;");
+        jmethodID mid_throwable_getStackTrace =
+                env->GetMethodID(throwable_class,
+                                 "getStackTrace",
+                                 "()[Ljava/lang/StackTraceElement;");
+        jmethodID mid_throwable_toString =
+                env->GetMethodID(throwable_class,
+                                 "toString",
+                                 "()Ljava/lang/String;");
+
+        jclass frame_class = env->FindClass("java/lang/StackTraceElement");
+        jmethodID mid_frame_toString =
+                env->GetMethodID(frame_class,
+                                 "toString",
+                                 "()Ljava/lang/String;");
+
+
+        std::string error_msg; // Could use ostringstream instead.
+
+        _append_exception_trace_messages(*env,
+                                         error_msg,
+                                         exception,
+                                         mid_throwable_getCause,
+                                         mid_throwable_getStackTrace,
+                                         mid_throwable_toString,
+                                         mid_frame_toString);
+        std::cerr << error_msg << std::endl;
+
+
+        va_list ap;
+        va_start(ap, numCleanups);
+        for(int i=0;i<numCleanups;i++)
+        {
+            env->DeleteLocalRef(va_arg(ap, jobject));
+            if(exceptionCheck(env,0))
+            {
+                //DBG("NFG on Cleanup");
+            }
+        }
+        va_end(ap);
+        return true;
+    }
+    return false;
+}
+
+/**
+   cleans up jobjects in long jni sequences
+ @parameter env - the JNI Environment
+ @parameter numCleanups - the number of open objects to delete
+ @parameter ... - cvariable list of objects to delete local reference
+
+ */
+static void cleanUpObjects(JNIEnv * env,int numCleanups,...)
+{
+    va_list ap;
+    va_start(ap, numCleanups);
+    for(int i=0;i<numCleanups;i++)
+    {
+        env->DeleteLocalRef(va_arg(ap, jobject));
+        if(exceptionCheck(env,0))
+        {
+            //DBG("NFG on Cleanup");
+        }
+    }
+    va_end(ap);
+
+}
+
+static void setJavaSystemProperty(JNIEnv *env,std::string propertyName,std::string propertyValue)
+{
+
+
+    if (env) {
+
+
+        jclass sysClass = env->FindClass("java/lang/System");
+        if(!sysClass){
+            exceptionCheck(env, 0);
+        }
+
+        jmethodID sysSetProp = env->GetStaticMethodID(sysClass, "setProperty", "(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;");
+        if(!sysSetProp){
+            exceptionCheck(env, 1,sysClass);
+            return;
+        }
+
+        jstring propName = env->NewStringUTF(propertyName.data());
+        jstring propVal = env->NewStringUTF(propertyValue.data());
+
+        jobject sysObj = env->NewObject(sysClass, sysSetProp,propName,propVal);
+
+        if(exceptionCheck(env, 4,sysClass,propName,propVal,sysObj))
+        {
+            return;
+        }
+
+        cleanUpObjects(env, 2, sysObj, sysClass);
+
+    }
+
+
+}
+
+
 static void main_thread() {
     // first get our full executable path
 
@@ -129,6 +265,7 @@ static void main_thread() {
     boost::filesystem::path resource_folder;
     boost::filesystem::path plugin_folder;
     boost::filesystem::path libraries_folder;
+    boost::filesystem::path frameworks_folder;
     boost::filesystem::path configuration_file;
     boost::filesystem::path jre_folder;
     boost::filesystem::path jre_jvmlib_file;
@@ -151,6 +288,12 @@ static void main_thread() {
     rf.append("/Resources");
     resource_folder = rf;
     std::cout << "resource folder " << rf << std::endl;
+
+    // Frameworks folder
+    std::string ff(rootf);
+    ff.append("/Frameworks");
+    frameworks_folder = ff;
+    std::cout << "frameworks folder " << ff << std::endl;
 
     // plugin file folder
     std::string pf(rf);
@@ -216,6 +359,9 @@ static void main_thread() {
 
     if (!exists(resource_folder)) {
         file_errors << "Resource folder does not exist" << std::endl;
+    }
+    if (!exists(frameworks_folder)) {
+        file_errors << "Frameworks folder does not exist" << std::endl;
     }
     if (!exists(configuration_file)) {
         file_errors << "Configuration File does not exist" << std::endl;
@@ -305,7 +451,14 @@ static void main_thread() {
 
     // launch up a VM
     IVirtualMachine *ivm = IVirtualMachine::getInstance();
-    ivm->addLibraryPath(libraries_folder.string());
+   // ivm->addLibraryPath(libraries_folder.string());
+std::string libfolders("-Djava.library.path=");
+libfolders.append (std::string("\""));
+
+    libfolders.append (frameworks_folder.string());
+    libfolders.append (std::string(":.\""));
+
+    ivm->addJavaOption(libfolders);
 
     for (boost::filesystem::directory_entry &entry: boost::filesystem::directory_iterator(plugin_folder)) {
         std::cout << "plugin added " << entry.path() << '\n';
@@ -323,6 +476,10 @@ static void main_thread() {
 //        exit(ERROR_JVM_LAUNCH);
 
     }
+
+    // add properties using vm setproperties
+
+    setJavaSystemProperty(env,std::string("jlauncher.library.path"), frameworks_folder.string());
 
     // set up shutdown hook in our jlauncher
 
