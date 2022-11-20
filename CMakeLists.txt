@@ -28,7 +28,7 @@ endif()
 
 
 if(DARWIN)
-
+    set(CMAKE_MACOSX_RPATH 1)
     list(APPEND MY_SRC alert_osx.mm osx_launch.mm )
     add_executable(${CUR_TARGET} MACOSX_BUNDLE ${MY_SRC})
     set_target_properties(${CUR_TARGET} PROPERTIES
@@ -50,6 +50,11 @@ if(DARWIN)
     set_directory_properties(
             PROPERTIES
             ADDITIONAL_CLEAN_FILES "${CMAKE_CURRENT_BINARY_DIR}/jlaunch.app")
+    #add the rpath to the build so we can find the dylibs
+    add_custom_command(TARGET ${CUR_TARGET}
+            POST_BUILD COMMAND
+            ${CMAKE_INSTALL_NAME_TOOL} -add_rpath "@executable_path/../Frameworks"
+            $<TARGET_FILE:jlaunch>)
 
     add_custom_command(TARGET ${CUR_TARGET} POST_BUILD
             COMMAND mvn clean install
