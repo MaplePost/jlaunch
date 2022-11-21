@@ -18,6 +18,14 @@
 
 int osx_main(int argc, const char *argv[]);
 
+
+
+void ParkEventLoop();
+
+#elif defined (WIN_VERSION)
+
+#endif
+
 void _append_exception_trace_messages(
         JNIEnv&	   ,
         std::string& ,
@@ -26,12 +34,6 @@ void _append_exception_trace_messages(
         jmethodID	   ,
         jmethodID	   ,
         jmethodID	   );
-
-void ParkEventLoop();
-
-#elif defined (WIN_VERSION)
-
-#endif
 
 namespace json = boost::json;
 
@@ -96,7 +98,7 @@ static bool startsWith(const std::string &str, const char *prefix) {
 
 
 enum ERROR_CODES {
-    NO_ERROR = 0,
+    NO_JLAUNCH_ERROR = 0,
     ERROR_LAUNCH_FILE_NAME = 1,
     ERROR_FILE_SYSTEM,
     ERROR_CONFIG_FILE,
@@ -404,10 +406,11 @@ static void main_thread() {
 //        exit(ERROR_CONFIG_FILE);
 
     }
-
+#ifdef MAC_VERSION
     if (setenv("EMBEDDED_JVM_LIBRARY_PATH", jre_jvmlib_file.string().data(), 1) != 0 ||
         setenv("EMBEDDED_JLI_LIBRARY_PATH", jre_jlilib_file.string().data(), 1) != 0) {
-
+#endif
+        if(false) {
         error_and_exit(ERROR_JVM_PRELAUNCH, "LAUNCH ERROR", "could not set environment variables for jvm launch");
 //        ErrorAlert("LAUNCH ERROR", "could not set environment variables for jvm launch");
 //        exit(ERROR_JVM_PRELAUNCH);
@@ -566,7 +569,9 @@ int main(int argc, const char *argv[]) {
 
     std::thread java_worker(main_thread);
     java_worker.detach();
+#ifdef MAC_VERSION
     ParkEventLoop();
+#endif
     std::cout << "Came outa the loop" << std::endl;
     return 0;
 
