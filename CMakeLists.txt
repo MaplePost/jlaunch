@@ -38,7 +38,7 @@ find_package(Boost REQUIRED filesystem system)
 if(Boost_FOUND)
     message("boost found ok")
     message("boost include dir $ENV{BOOST_INCLUDEDIR}")
-    message("boost lib dir $ENV{BOOST_LIBRARYDIR}")
+    message("boost lib dir ${Boost_LIBRARY_DIR}")
 
 else()
     message("BOOST NOT FOUND ")

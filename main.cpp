@@ -409,8 +409,9 @@ static void main_thread() {
 #ifdef MAC_VERSION
     if (setenv("EMBEDDED_JVM_LIBRARY_PATH", jre_jvmlib_file.string().data(), 1) != 0 ||
         setenv("EMBEDDED_JLI_LIBRARY_PATH", jre_jlilib_file.string().data(), 1) != 0) {
-#endif
+#else
         if(false) {
+#endif
         error_and_exit(ERROR_JVM_PRELAUNCH, "LAUNCH ERROR", "could not set environment variables for jvm launch");
 //        ErrorAlert("LAUNCH ERROR", "could not set environment variables for jvm launch");
 //        exit(ERROR_JVM_PRELAUNCH);
