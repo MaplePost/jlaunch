@@ -75,6 +75,8 @@ public:
 	void setStartupClass(string startClass);
 	void startJava();
 	void startJVM();
+    void startJVM(std::string jvmPath, std::string jliPath);
+
 	void killJVM();
 	string findEmbeddedLibrary(string appBase, bool sixtyfourbit);
 	JavaVM * getJVM(){return jvm;};

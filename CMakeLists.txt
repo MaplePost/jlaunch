@@ -127,9 +127,23 @@ if(WIN32)
     add_executable(${CUR_TARGET}
             IVirtualMachine.cpp
             main.cpp)
-target_compile_definitions(${CUR_TARGET} PUBLIC WIN_VERSION=1)
-
+    target_compile_definitions(${CUR_TARGET} PUBLIC WIN_VERSION=1)
     target_link_libraries(${CUR_TARGET} ${Boost_CONTAINER_LIBRARY} ${Boost_FILESYSTEM_LIBRARY} ${Boost_JSON_LIBRARY})
+
+#    add_custom_command(TARGET ${CUR_TARGET} POST_BUILD
+#            COMMAND mvn clean install
+#            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/jlauncher
+
+#            COMMENT "Building java test app"
+#            )
+
+    # let's build the package now
+    add_custom_command(TARGET ${CUR_TARGET} POST_BUILD
+            COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/build_win_app.bat "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}" "${SOURCE_JRE_ZIP}" "${CMAKE_CURRENT_SOURCE_DIR}"
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+            COMMENT "Building app structure"
+            )
+
 
 endif(WIN32)
 

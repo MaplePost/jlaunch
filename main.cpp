@@ -347,10 +347,11 @@ static void main_thread() {
 
 
 #elif defined(WIN_VERSION)
+    std::string rootf(launch_file.parent_path().string());
     // for mac we are expected to be inside a bundle .. this brings us to jlaunch.app/Contents
     std::string rf(launch_file.parent_path().string());
     // resources folder
-    rf.append("\\]Resources");
+    rf.append("\\Resources");
     resource_folder = rf;
     // plugin file folder
     std::string pf(rf);
@@ -365,6 +366,22 @@ static void main_thread() {
     jf.append("\\Java\\jre");
     jre_folder = jf;
 
+    std::string jli(jf);
+    jli.append("\\bin\\jli.dll");
+    jre_jlilib_file = jli;
+    std::cout << "jre jli lib file " << jli << std::endl;
+
+    // jvm lib
+    std::string jvm(jf);
+    jvm.append("\\bin\\server\\jvm.dll");
+    jre_jvmlib_file = jvm;
+    std::cout << "jre jvm lib file " << jvm << std::endl;
+
+    std::string lf(rootf);
+    lf.append("\\Libraries");
+    libraries_folder = lf;
+
+
 #endif
 
     // do the file and folder checks
@@ -373,9 +390,11 @@ static void main_thread() {
     if (!exists(resource_folder)) {
         file_errors << "Resource folder does not exist" << std::endl;
     }
+#ifdef MAC_VERSION
     if (!exists(frameworks_folder)) {
         file_errors << "Frameworks folder does not exist" << std::endl;
     }
+#endif
     if (!exists(configuration_file)) {
         file_errors << "Configuration File does not exist" << std::endl;
     }
@@ -479,8 +498,12 @@ libfolders.append (std::string("\""));
         std::cout << "plugin added " << entry.path() << '\n';
         ivm->addLibraryPath(entry.path().string());
     }
-
+#ifdef MAC_VERSION
     ivm->startJVM();
+#endif
+#ifdef WIN_VERSION
+    ivm->startJVM(jre_jvmlib_file.string(),jre_jlilib_file.string());
+#endif
 
     // attach main thread
     JNIEnv *env = ivm->attachJNIThread();

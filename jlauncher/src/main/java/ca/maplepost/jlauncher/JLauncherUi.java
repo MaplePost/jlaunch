@@ -38,7 +38,7 @@ public class JLauncherUi extends javax.swing.JFrame {
         if (Desktop.isDesktopSupported()) {
         LOG.log(Level.INFO, "DESKTOP IS SUPPORTED");
             Desktop dt = Desktop.getDesktop();
-            dt.setAboutHandler(ah);
+           // dt.setAboutHandler(ah);
             
         } else {
             LOG.log(Level.INFO, "DESKTOP NOT SUPPORTED");
@@ -98,7 +98,9 @@ public class JLauncherUi extends javax.swing.JFrame {
         }
         //</editor-fold>
         final JLauncherUi jlui = new JLauncherUi();
-        jlui.initDesktop();
+        if(Desktop.isDesktopSupported()) {
+            jlui.initDesktop();
+        }
         LOG.log(Level.INFO,"thread name " + Thread.currentThread().getName());
         
         /* Create and display the form */

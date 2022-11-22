@@ -184,7 +184,19 @@ void IVirtualMachine::startJava()
 }
 
 
+void IVirtualMachine::startJVM(std::string jvmPath, std::string jliPath)
+{
+#ifdef WIN_VERSION
+    handle = LoadLibrary(jvmPath.c_str());
+    if(handle == NULL){
+        logLastError(TEXT("startJVM - loadlibrary call"));
+        return;
+    }
+    launchJVM();
+    return;
+#endif
 
+}
 
 void IVirtualMachine::startJVM()
 {
