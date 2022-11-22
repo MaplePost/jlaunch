@@ -34,12 +34,16 @@ endif()
 #and the path to the boost lib dir
 
 
-find_package(Boost REQUIRED filesystem system)
+find_package(Boost REQUIRED OPTIONAL_COMPONENTS filesystem json)
 if(Boost_FOUND)
     message("boost found ok")
     message("boost include dir $ENV{BOOST_INCLUDEDIR}")
+
     message("boost lib dir ${Boost_LIBRARY_DIR}")
 
+    message("boost lib dir $ENV{BOOST_LIBRARYDIR}")
+    message("boost filesystem library release ${Boost_FILESYSTEM_LIBRARY} ")
+    message("boost json library release ${Boost_JSON_LIBRARY} ")
 else()
     message("BOOST NOT FOUND ")
 endif()
@@ -100,7 +104,7 @@ if(WIN32)
 target_compile_definitions(${CUR_TARGET} PUBLIC WIN_VERSION=1)
 
 target_link_directories(${CUR_TARGET} PUBLIC $ENV{BOOST_LIBRARYDIR})
-    target_link_libraries(${CUR_TARGET} PUBLIC Boost::filesystem )
+    target_link_libraries(${CUR_TARGET}  )
 
 endif(WIN32)
 
