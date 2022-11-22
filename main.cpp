@@ -599,6 +599,40 @@ libfolders.append (std::string("\""));
 
 }
 
+#ifdef WIN_VERSION
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+{
+    MSG msg;
+    BOOL bRet;
+
+    std::thread java_worker(main_thread);
+    java_worker.detach();
+
+    while (1)
+    {
+        bRet = GetMessage(&msg, NULL, 0, 0);
+
+        if (bRet > 0)  // (bRet > 0 indicates a message that must be processed.)
+        {
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
+        else if (bRet < 0)  // (bRet == -1 indicates an error.)
+        {
+            // Handle or log the error; possibly exit.
+            // ...
+            int hello = 1;
+        }
+        else  // (bRet == 0 indicates "exit program".)
+        {
+            int hello = 0;
+            break;
+        }
+    }
+    return msg.wParam;
+}
+#endif
+
 
 int main(int argc, const char *argv[]) {
 

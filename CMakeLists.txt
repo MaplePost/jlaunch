@@ -124,7 +124,11 @@ if(DARWIN)
 endif(DARWIN)
 
 if(WIN32)
-    add_executable(${CUR_TARGET}
+
+
+
+
+    add_executable(${CUR_TARGET} WIN32
             IVirtualMachine.cpp
             main.cpp)
     target_compile_definitions(${CUR_TARGET} PUBLIC WIN_VERSION=1)
