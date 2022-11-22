@@ -10,14 +10,32 @@ set(CUR_TARGET jlaunch)
 
 set(MY_SRC IVirtualMachine.cpp
         main.cpp)
+if(DARWIN)
 option(SOURCE_JRE_ZIP "JRE SOURCE ZIP FILE" "~/SDKs/JAVA/jre.zip" )
+endif()
+
+if(WIN32)
+option(SOURCE_JRE_ZIP "JRE SOURCE ZIP FILE" "C:\\SDKs\\JAVA\\jre.zip" )
+endif()
+
+message("Cmake build type setting is ${CMAKE_BUILD_TYPE}")
+
+
+if(equal(${CMAKE_BUILD_TYPE}, "Debug"))
+    set(Boost_USE_DEBUG_LIBS        ON)  # ignore debug libs and
+    set(Boost_USE_RELEASE_LIBS       OFF)  # only find release libs
+else()
+    set(Boost_USE_DEBUG_LIBS        OFF)  # ignore debug libs and
+    set(Boost_USE_RELEASE_LIBS       ON)  # only find release libs
+
+endif()
 
 set(Boost_USE_STATIC_LIBS        ON)  # only find static libs
-set(Boost_USE_DEBUG_LIBS        ON)  # ignore debug libs and
-set(Boost_USE_RELEASE_LIBS       OFF)  # only find release libs
 set(Boost_USE_MULTITHREADED      ON)
 set(Boost_USE_STATIC_RUNTIME    OFF)
 set(Boost_NO_BOOST_CMAKE        OFF) # had to set this off on mac using brew to install cmake etc
+
+
 
 #for windows set the boost root
 if(WIN32)
