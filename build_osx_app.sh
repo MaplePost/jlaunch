@@ -67,6 +67,10 @@ testfileexit "${BASE_BINARY_DIR}/${BASE_APP}/Contents/Resources/Plugins"
 mkdir -pv "${BASE_BINARY_DIR}/${BASE_APP}/Contents/Libraries"
 testfileexit "${BASE_BINARY_DIR}/${BASE_APP}/Contents/Libraries"
 
+# create frameworks folder
+mkdir -pv "${BASE_BINARY_DIR}/${BASE_APP}/Contents/Frameworks"
+testfileexit "${BASE_BINARY_DIR}/${BASE_APP}/Contents/Frameworks"
+
 # create configuration folder
 mkdir -pv "${BASE_BINARY_DIR}/${BASE_APP}/Contents/Resources/Config"
 testfileexit "${BASE_BINARY_DIR}/${BASE_APP}/Contents/Resources/Config"

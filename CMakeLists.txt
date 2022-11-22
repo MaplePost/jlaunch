@@ -89,6 +89,7 @@ if(DARWIN)
             MACOSX_BUNDLE_BUNDLE_NAME ${CUR_TARGET}
             MACOSX_BUNDLE_BUNDLE_VERSION "0.1"
             MACOSX_BUNDLE_SHORT_VERSION_STRING "0.1"
+            XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY ""
             #MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/cmake/customtemplate.plist.in
             )
 
@@ -115,7 +116,7 @@ if(DARWIN)
 
 
     add_custom_command(TARGET ${CUR_TARGET} POST_BUILD
-            COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/build_osx_app.sh "${CMAKE_CURRENT_BINARY_DIR}" "${SOURCE_JRE_ZIP}"
+            COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/build_osx_app.sh "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}" "${SOURCE_JRE_ZIP}"
             WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
             COMMENT "Building app"
             )
