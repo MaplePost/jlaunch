@@ -10,21 +10,28 @@ set(CUR_TARGET jlaunch)
 
 set(MY_SRC IVirtualMachine.cpp
         main.cpp)
-if(DARWIN)
-option(SOURCE_JRE_ZIP "JRE SOURCE ZIP FILE" "~/SDKs/JAVA/jre.zip" )
+
+if(NOT DEFINED SOURCE_JRE_ZIP)
+    message(FATAL_ERROR "SOURCE_JRE_ZIP is not defined. Please set this cmake option -DSOURCE_JRE_ZIP=/path/to/jre.zip")
+    return()
 endif()
 
-if(WIN32)
-option(SOURCE_JRE_ZIP "JRE SOURCE ZIP FILE" "C:\\SDKs\\JAVA\\jre.zip" )
-endif()
 
 message("Cmake build type setting is ${CMAKE_BUILD_TYPE}")
 
 
-if(equal(${CMAKE_BUILD_TYPE}, "Debug"))
-    set(Boost_USE_DEBUG_LIBS        ON)  # ignore debug libs and
-    set(Boost_USE_RELEASE_LIBS       OFF)  # only find release libs
+if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+    message("Debug build")
+    if(WIN32)
+        set(Boost_USE_DEBUG_LIBS        ON)  # ignore debug libs and
+        set(Boost_USE_RELEASE_LIBS       OFF)  # only find release libs
+    else()
+        #on mac the debug libs didn't work or linker doesn't care as much
+        set(Boost_USE_DEBUG_LIBS        OFF)  # ignore debug libs and
+        set(Boost_USE_RELEASE_LIBS       ON)  # only find release libs
+    endif()
 else()
+    message("Release build")
     set(Boost_USE_DEBUG_LIBS        OFF)  # ignore debug libs and
     set(Boost_USE_RELEASE_LIBS       ON)  # only find release libs
 
