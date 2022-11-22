@@ -259,6 +259,17 @@ static void main_thread() {
 
 #endif
 
+#ifdef WIN_VERSION
+    if (GetModuleFileNameA(NULL, &buffer[0], buffer_size) == buffer_size) {
+        buffer.resize(buffer_size);
+        GetModuleFileNameA(NULL, &buffer[0], buffer_size);
+    } else {
+
+    }
+
+#endif
+
+
 // determine the parent dir and find the config json
 
     boost::filesystem::path launch_file = buffer.data();
@@ -573,6 +584,27 @@ int main(int argc, const char *argv[]) {
 #ifdef MAC_VERSION
     ParkEventLoop();
 #endif
+
+#ifdef WIN_VERSION
+
+    MSG msg;
+    BOOL bRet;
+    while( (bRet = GetMessage( &msg, NULL, 0, 0 )) != 0)
+    {
+        if (bRet == -1)
+        {
+            // handle the error and possibly exit
+        }
+        else
+        {
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
+    }
+
+    // Return the exit code to the system.
+#endif
+
     std::cout << "Came outa the loop" << std::endl;
     return 0;
 

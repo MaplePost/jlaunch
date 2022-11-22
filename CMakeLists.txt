@@ -13,8 +13,8 @@ set(MY_SRC IVirtualMachine.cpp
 option(SOURCE_JRE_ZIP "JRE SOURCE ZIP FILE" "~/SDKs/JAVA/jre.zip" )
 
 set(Boost_USE_STATIC_LIBS        ON)  # only find static libs
-set(Boost_USE_DEBUG_LIBS        OFF)  # ignore debug libs and
-set(Boost_USE_RELEASE_LIBS       ON)  # only find release libs
+set(Boost_USE_DEBUG_LIBS        ON)  # ignore debug libs and
+set(Boost_USE_RELEASE_LIBS       OFF)  # only find release libs
 set(Boost_USE_MULTITHREADED      ON)
 set(Boost_USE_STATIC_RUNTIME    OFF)
 set(Boost_NO_BOOST_CMAKE        OFF) # had to set this off on mac using brew to install cmake etc
@@ -44,6 +44,7 @@ if(Boost_FOUND)
     message("boost lib dir $ENV{BOOST_LIBRARYDIR}")
     message("boost filesystem library release ${Boost_FILESYSTEM_LIBRARY} ")
     message("boost json library release ${Boost_JSON_LIBRARY} ")
+    message("boost json library release ${Boost_CONTAINER_LIBRARY} ")
 else()
     message("BOOST NOT FOUND ")
 endif()
@@ -103,8 +104,7 @@ if(WIN32)
             main.cpp)
 target_compile_definitions(${CUR_TARGET} PUBLIC WIN_VERSION=1)
 
-target_link_directories(${CUR_TARGET} PUBLIC $ENV{BOOST_LIBRARYDIR})
-    target_link_libraries(${CUR_TARGET}  )
+    target_link_libraries(${CUR_TARGET} ${Boost_CONTAINER_LIBRARY} ${Boost_FILESYSTEM_LIBRARY} ${Boost_JSON_LIBRARY})
 
 endif(WIN32)
 
