@@ -494,6 +494,11 @@ libfolders.append (std::string("\""));
 
     ivm->addJavaOption(libfolders);
 
+    // add jvm options found in the config file
+    for (std::string &jvmarg: jvm_arguments) {
+        ivm->addJavaOption(jvmarg);
+    }
+
     for (boost::filesystem::directory_entry &entry: boost::filesystem::directory_iterator(plugin_folder)) {
         std::cout << "plugin added " << entry.path() << '\n';
         ivm->addLibraryPath(entry.path().string());
