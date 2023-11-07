@@ -521,8 +521,11 @@ libfolders.append (std::string("\""));
     }
 
     // add properties using vm setproperties
-
+#ifdef MAC_VERSION
     setJavaSystemProperty(env,std::string("jlauncher.library.path"), frameworks_folder.string());
+#elif WIN_VERSION
+    setJavaSystemProperty(env,std::string("jlauncher.library.path"), libraries_folder.string());
+#endif
 
     // set up shutdown hook in our jlauncher
 

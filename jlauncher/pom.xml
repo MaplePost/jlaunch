@@ -10,4 +10,34 @@
         <maven.compiler.target>11</maven.compiler.target>
         <exec.mainClass>ca.maplepost.jlauncher.Jlauncher</exec.mainClass>
     </properties>
+    <build>
+
+
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jarsigner-plugin</artifactId>
+            <version>1.4</version>
+            <executions>
+                <execution>
+                    <id>sign</id>
+                    <goals>
+                        <goal>sign</goal>
+                    </goals>
+                    <configuration>
+                        <storetype>${keystore.type}</storetype>
+                        <keystore>${gnarly.keystore.path}</keystore>
+                        <alias>${gnarly.keystore.alias}</alias>
+                        <storepass>${gnarly.keystore.password}</storepass>
+                        <arguments>
+                            <argument>-tsa</argument>
+                            <argument>http://sha256timestamp.ws.symantec.com/sha256/timestamp</argument>
+                        </arguments>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+
+    </build>
 </project>

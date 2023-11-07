@@ -24,12 +24,14 @@ REM get the command line arguments
 set PRODUCT_FOLDER=%1
 set JRE_ZIP_FILE=%2
 set SOURCE_FOLDER=%3
+set BINARY_FOLDER=%4
+
 
 echo "########### PROJECT SETTINGS ################"
 echo "PRODUCT_BUILD_FOLDER          %PRODUCT_FOLDER%"
-echo "zip file                    %JRE_ZIP_FILE%"
+echo "JRE_ZIP_FILE                    %JRE_ZIP_FILE%"
 echo "SOURCE_FOLDER               %SOURCE_FOLDER%"
-
+echo "BINARY_FOLDER               %BINARY_FOLDER%"
 echo off
 
 
@@ -72,7 +74,21 @@ popd
 
     ) else (
         echo "jre does not exist"
+        exit 1
     )
+
+REM make a product jar file
+
+mkdir "%BINARY_FOLDER%\productjar"
+
+jar -Mcvf "%BINARY_FOLDER%\productjar\jlaunch.jar" -C %PRODUCT_FOLDER% .
+if %errorlevel% neq 0 exit 1
+
+cd "%SOURCE_FOLDER%"
+mvn clean install -DBASE_BINARY_DIR="%BINARY_FOLDER%\productjar"
+if %errorlevel% neq 0 exit 1
+
+REM
 
 popd
 
