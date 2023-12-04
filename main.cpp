@@ -18,8 +18,6 @@
 
 int osx_main(int argc, const char *argv[]);
 
-
-
 void ParkEventLoop();
 
 #elif defined (WIN_VERSION)
@@ -109,14 +107,9 @@ enum ERROR_CODES {
 void ErrorAlert(const char *msg, const char *info);
 
 void error_and_exit(ERROR_CODES err, std::string info, std::string detail) {
-
     std::cout << info << std::endl << detail << std::endl;
     exit(err);
-
 }
-
-
-
 
 /** Error reporting with jboject cleanup)
    pass any jobjects that need to be cleaned out on error
@@ -132,9 +125,7 @@ static bool exceptionCheck(JNIEnv * env,int numCleanups,...)
     jthrowable exception = env->ExceptionOccurred();
     if (exception != NULL)
     {
-
         env->ExceptionClear();
-
         jclass throwable_class = env->FindClass("java/lang/Throwable");
         jmethodID mid_throwable_getCause =
                 env->GetMethodID(throwable_class,
@@ -166,7 +157,6 @@ static bool exceptionCheck(JNIEnv * env,int numCleanups,...)
                                          mid_throwable_toString,
                                          mid_frame_toString);
         std::cerr << error_msg << std::endl;
-
 
         va_list ap;
         va_start(ap, numCleanups);
